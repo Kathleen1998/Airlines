@@ -1,0 +1,43 @@
+install.packages("tidyverse")
+install.packages("ggplot2")
+install.packages("dplyr")
+install.packages("tidyr")
+install.packages("rgl")
+install.packages("readr")
+install.packages("here")
+install.packages("skimr")
+install.packages("Janitor")
+install.packages("lubridate")
+install.packages("chron")
+install.packages("broom")
+install.packages("ggpubr")
+library(broom)
+library(ggpubr)
+library(lubridate)
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(rgl)
+library(readr)
+library(here)
+library(skimr)
+library(janitor)
+library(chron)
+library(readr)
+
+install.packages("reshape2") ## 
+install.packages("plotly")
+library(reshape2)
+library(plotly)
+
+install.packages("waffle") ## for LDgraph
+install.packages("ggthemes") ## for LDgraph
+library(waffle)
+library(ggthemes)
+
+# Get the world polygon and extract UK
+install.packages('giscoR')
+
+
+
