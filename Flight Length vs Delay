@@ -1,0 +1,50 @@
+# flight length vs delay--------------------------------
+
+#creating a dataframe to work off from
+LengthDelay <- data.frame(
+    ID = airlines$id,
+    Length = airlines$Length,
+    Delay = airlines$Delay
+  )
+#The key is that ggplot2 needs to know that 0 and 1 are discrete categories
+LengthDelay$Delay <- factor(LengthDelay$Delay,
+                      levels = c(0, 1), # Define the order of levels
+                      labels = c("No Delay", "Delayed")) # Assign descriptive labels
+
+# Basic violin plot
+ggplot(LengthDelay, aes(x=Delay, y=Length)) + 
+  geom_violin(trim=FALSE)+ 
+  geom_boxplot(width=0.1)
+#These individual points represent outliers
+
+#You can visually compare the presence and magnitude of these outliers between "No Delay" and "Delayed" flights. In your plot, both seem to have a similar pattern of high-value outliers, suggesting that extremely long flights can occur regardless of whether they are delayed.
+
+install.packages('viridis')
+install.packages('hrbrthemes')
+library(hrbrthemes)
+library(viridis)
+
+trash <- data.frame(
+  name=c( rep("A",500), rep("B",500), rep("B",500), rep("C",20), rep('D', 100)  ),
+  value=c( rnorm(500, 10, 5), rnorm(500, 13, 1), rnorm(500, 18, 1), rnorm(20, 25, 4), rnorm(100, 12, 1) )
+)
+# sample size
+sample_size = trash %>% group_by(name) %>% summarize(num=n())
+
+
+
+trash %>%
+  left_join(sample_size) %>%
+  mutate(myaxis = paste0(name, "\n", "n=", num)) %>%
+  ggplot( aes(x=myaxis, y=value, fill=name)) +
+  geom_violin(width=1.4) +
+  geom_boxplot(width=0.1, color="grey", alpha=0.2) +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("A Violin wrapping a boxplot") +
+  xlab("")
+
