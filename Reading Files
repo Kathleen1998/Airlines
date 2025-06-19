@@ -1,0 +1,42 @@
+## reading files------------------------------
+FullAirlines <- read_csv("Airlines2.csv")
+airports <- read_csv("airports.csv")
+missports <- read_csv("missingports4.csv")
+View(airports)
+
+##Cleaning --------------------------------
+
+airlines[duplicated(airlines), ]
+
+Airlines <- na.omit(airlines)
+
+n_distinct(airlines$id) #539383
+n_distinct(airlines$Airline) #18
+n_distinct(airlines$AirportFrom) #293
+n_distinct(airlines$AirportTo)
+n_distinct(airlines$Airline)
+
+##---------------------------------------------
+
+unique(airlines$Airline)
+
+CO <- airlines[airlines$Airline == "CO", ]
+US <- airlines[airlines$Airline == "US", ]
+AA <- airlines[airlines$Airline == "AA", ]
+AS <- airlines[airlines$Airline == "AS", ]
+DL <- airlines[airlines$Airline == "DL", ]
+B6 <- airlines[airlines$Airline == "B6", ]
+HA <- airlines[airlines$Airline == "HA", ]
+OO <- airlines[airlines$Airline == "OO", ]
+E9 <- airlines[airlines$Airline == "9E", ]
+OH <- airlines[airlines$Airline == "OH", ]
+EV <- airlines[airlines$Airline == "EV", ]
+XE <- airlines[airlines$Airline == "XE", ]
+YV <- airlines[airlines$Airline == "YV", ]
+UA <- airlines[airlines$Airline == "UA", ]
+MQ <- airlines[airlines$Airline == "MQ", ]
+FL <- airlines[airlines$Airline == "FL", ]
+F9 <- airlines[airlines$Airline == "F9", ]
+WN <- airlines[airlines$Airline == "WN", ]
+
+
