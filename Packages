@@ -11,6 +11,7 @@ install.packages("lubridate")
 install.packages("chron")
 install.packages("broom")
 install.packages("ggpubr")
+
 library(broom)
 library(ggpubr)
 library(lubridate)
@@ -26,8 +27,9 @@ library(janitor)
 library(chron)
 library(readr)
 
-install.packages("reshape2") ## 
-install.packages("plotly")
+
+install.packages("waffle") ## for LDgraph
+install.packages("ggthemes") ## for LDgraph
 library(reshape2)
 library(plotly)
 
