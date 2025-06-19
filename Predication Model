@@ -1,0 +1,97 @@
+plot(Total ~ DAYS, data = Days)
+AirModel <- lm(Delay ~ DayOfWeek + Time + Length + Airline, data = airlines)
+summary(AirModel)
+#simple model building
+
+set.seed(123)
+version2 <- airlines[sample(nrow(airlines), 250000),]
+
+plot(Total ~ DAYS, data = Days)
+AirModel <- lm(Delay ~ DayOfWeek + Time + Length + Airline, data = airlines)
+summary(AirModel)
+## breaking down data set for Training and for Testing
+
+set.seed(123) ## helps to keep the same random selection everytime
+sample_size <- floor(0.8 * nrow(FullAirlines)) ## Taking 80 percent of the row from the dataset
+train_indices <- sample(seq_len(nrow(FullAirlines)),size = sample_size) #this is randomizing which rows I chose 
+
+train <- FullAirlines[train_indices, ] # this is selecting all of the rows that were randomly selected
+test <- FullAirlines[-train_indices, ] # this selects all the rows that werent selected in the randomization 
+
+DelayModel <- glm(Delay ~ DayOfWeek + Time + Length, data = train_data, family = binomial)
+summary(DelayModel) # to see the coefficient
+
+#Makes some predictions
+prediction_df <- predict(DelayModel, newdata = test, type = "response" )
+head(prediction_df)
+
+#Turning prediction into binary
+predict_binary <- ifelse(prediction_df > 0.5, 1, 0)
+
+#confusion matrix
+table(predicted = predict_binary, actual = test$Delay)
+
+AirlinesModel <- test
+
+AirlinesModel$prediction_df <- predict(DelayModel, newdata = test, type = "response" )
+AirlinesModel$predict_binary <- ifelse(AirlinesModel$prediction_df > 0.5, 1, 0)
+
+library(caret)
+conf_matrix <- table(Predicted = AirlinesModel$predict_binary , Actual = AirlinesModel$Delay)
+fourfoldplot(conf_matrix, color = c("firebrick", "steelblue"),
+             main = "Confusion Matrix")
+
+
+
+
+## mtcatrs understanding======================
+data(mtcars)
+mtcars$am <- factor(mtcars$am, levels = c(0, 1))  # Make it binary factor
+
+model <- glm(am ~ hp + wt, data = mtcars, family = "binomial")
+summary(model)
+
+predicted_probs <- predict(model, type = "response")
+head(predicted_probs)
+
+predicted_classes <- ifelse(predicted_probs > 0.5, 1, 0)
+
+table(Predicted = predicted_classes, Actual = mtcars$am)
+
+# Add predicted probabilities and class to mtcars
+mtcars$car <- rownames(mtcars)
+mtcars$predicted_prb <- predict(model, type = "response")
+mtcars$predicted_class <- ifelse(mtcars$predicted_prob > 0.5, 1, 0)
+
+ggplot(mtcars, aes(x = reorder(car, predicted_prob), y = predicted_prob, fill = factor(am))) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Predicted Probability of Manual Transmission",
+    x = "Car",
+    y = "Predicted Probability",
+    fill = "Actual Transmission (am)"
+  ) +
+  scale_fill_manual(values = c("0" = "steelblue", "1" = "firebrick"),
+                    labels = c("Automatic", "Manual")) +
+  theme_minimal()
+
+install.packages('caret')
+library(caret)
+conf_matrix <- table(Predicted = mtcars$predicted_class, Actual = mtcars$am)
+fourfoldplot(conf_matrix, color = c("firebrick", "steelblue"),
+             main = "Confusion Matrix")
+
+
+ggplot(mtcars, aes(x = wt, y = predicted_prob, color = factor(am))) +
+  geom_point(size = 3) +
+  geom_smooth(method = "loess", se = FALSE) +
+  labs(
+    title = "Predicted Probability of Manual Transmission by Weight",
+    x = "Weight (1000 lbs)",
+    y = "Predicted Probability",
+    color = "Actual Transmission"
+  ) +
+  scale_color_manual(values = c("0" = "steelblue", "1" = "firebrick"),
+                     labels = c("Automatic", "Manual")) +
+  theme_minimal()
