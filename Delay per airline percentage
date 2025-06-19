@@ -1,0 +1,42 @@
+##Delay per airline percentage--------------------
+install.packages("reshape2")
+# Load the package (do this every time you start a new R session and want to use it)
+library(reshape2) # for the melt function
+
+
+Total <- table(airlines$Airline)
+Total_df <- as.data.frame(my_table)
+
+CountFlight <- ggplot(Total_df, aes(x = Var1, y = Freq)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Total Flights",
+       x = "Flights",
+       y = "Airline") +
+  theme_minimal()
+
+
+Delays2 <- airlines %>%
+  group_by(Airline)%>%
+  summarise(Total = sum(Delay))
+
+
+Aline <- (Total_df$Var1)
+
+Atotal <- (Total_df$Freq)
+
+Adelay <- (Delays$Total)
+
+overLap <- data.frame(Aline, Atotal, Adelay)
+
+overLap %>%
+  melt(value.name = 'DelaysVsFlights',id.vars = 'Aline',variable.name = 'Airlines')  %>%
+  ggplot(aes(x=Aline,y=DelaysVsFlights,fill=Airlines))+
+  geom_col(position = position_jitterdodge(dodge.width = 0.5,jitter.height = 0,jitter.width = 0,seed = 25)) -> gg_output
+
+
+plotly_object <- plotly::ggplotly(gg_output)
+
+plotly_object
+
+
+sum(overLap$Adelay)
