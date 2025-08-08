@@ -1,0 +1,135 @@
+USA <- gisco_get_countries(country = "USA", resolution = 1) ## SF spatial dataset; creating the shape of the us
+US  <- st_as_sf(maps::map("state", fill=TRUE, plot =FALSE))
+US <- states(cb = TRUE, resolution = "20m") %>%
+  shift_geometry()
+data <- world.cities %>% filter(country.etc == "UK")
+
+# Create breaks for the color scale
+mybreaks <- c(5,50,500,5000, 10000)
+ToPortDelay2 <- ToPortDelay2[-9, ] # Removes the 9th row
+ToPortDelay2 <- ToPortDelay2[-87, ]
+
+# Build the map
+ToPortDelay2 %>%
+  ggplot() +
+  geom_sf(data = USA, fill = "grey", alpha = 0.3) +
+  geom_point(aes(x = LONGITUDE, y = LATITUDE, size = Total, color = Total, alpha = Total),
+             shape = 20, stroke = FALSE
+  ) +
+  scale_size_continuous(
+    name = "Delays", trans = "log",
+    range = c(1, 9), breaks = mybreaks
+  ) +
+  scale_alpha_continuous(
+    name = "Delays", trans = "log",
+    range = c(0.1, .9), breaks = mybreaks
+  ) +
+  scale_color_viridis_c(
+    option = "magma", trans = "log",
+    breaks = mybreaks, name = "Delays"
+  ) +
+  theme_void() +
+  guides(colour = guide_legend()) +
+  ggtitle("Delays per airport in the USA") +
+  theme(
+    legend.position.inside = c(1, 0.6),
+    text = element_text(color = "#22211d"),
+    plot.margin = margin(r = 0.4, l = 0.1, unit = "cm"),
+    plot.background = element_rect(fill = "#f5f5f2", color = NA),
+    panel.background = element_rect(fill = "#f5f5f2", color = NA),
+    plot.title = element_text(size = 14, hjust = 0.5, color = "#4e4d47"),
+    legend.title = element_text(size = 8),
+    legend.text = element_text(size = 8)
+  )
+
+# The hopeful answer to my prayers 
+ToPortDelay3 <- ToPortDelay2
+Port_sf <- st_as_sf(ToPortDelay2, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+PortShift<- shift_geometry(Port_sf, position = "below")
+# Download US county geo data to reproduce this example but filter out US territories  
+tigcounties <- counties(cb = TRUE, resolution = "5m", year = 2020)
+tigcounties <- tigcounties[as.numeric(tigcounties$STATEFP) < 60, ]
+
+tigstates <- states(cb = FALSE, resolution = "5m", year = 2020)
+tigstates <- tigstates[as.numeric(tigstates$STATEFP) <= 60, ]
+
+
+
+geo_shifted <- shift_geometry(
+  tigcounties,
+  position = "below", # other option: "outside"
+  preserve_area = FALSE
+)
+
+# Example: shift Alaska and Hawaii manually (approximate)
+ToPortDelay3 <- ToPortDelay3 %>%
+  mutate(
+    lon_shifted = case_when(
+      STATE == "AK" ~ LONGITUDE + 35,  # Alaska
+      STATE == "HI" ~ LONGITUDE + 52,  # Hawaii
+      TRUE ~ LONGITUDE
+    ),
+    lat_shifted = case_when(
+      STATE == "AK" ~ LATITUDE - 15,   # Alaska
+      STATE == "HI" ~ LATITUDE - 5,    # Hawaii
+      TRUE ~ LATITUDE
+    )
+  )
+
+
+
+airports_shifted_sf <- st_as_sf(ToPortDelay3, coords = c("lon_shifted", "lat_shifted"), crs = 4326)
+
+st_crs(geo_shifted)
+st_crs(PortShift)
+
+
+
+
+tigcounties <- counties(cb = TRUE, resolution = "5m", year = 2020)
+tigcounties <- tigcounties[as.numeric(tigcounties$STATEFP) < 60, ]
+
+
+
+Port_sf <- st_as_sf(ToPortDelay2, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+PortShift<- shift_geometry(Port_sf, position = "below",preserve_area = FALSE)
+
+
+theme_update(plot.title = element_text(hjust = 0.5))
+
+PortShift %>% 
+  ggplot() +
+  geom_sf(data = geo_shifted, fill = "grey80", color = "white") +
+  geom_sf(data = PortShift, color = "red", size = 1) +
+  geom_point(
+    aes(color = Total, size = Total, geometry = geometry),
+    stat = "sf_coordinates"
+  ) +  scale_color_viridis_c(option = "C") +
+  theme(legend.position = "bottom")
+  scale_size_continuous(
+    name = "Delays", trans = "log",
+    range = c(1, 9), breaks = mybreaks
+  ) +
+  scale_alpha_continuous(
+    name = "Delays", trans = "log",
+    range = c(0.1, .9), breaks = mybreaks
+  ) +
+  scale_color_viridis_c(
+    option = "magma", trans = "log",
+    breaks = mybreaks, name = "Delays"
+  ) +
+    theme_void() +
+  guides(colour = guide_legend()) +
+    ggtitle("Delays per airport in the USA") 
+  theme(
+    legend.position.inside = c(1, 0.6),
+    text = element_text(color = "#22211d"),
+    plot.margin = margin(r = 0.4, l = 0.1, unit = "cm"),
+    plot.background = element_rect(fill = "#f5f5f2", color = NA),
+    panel.background = element_rect(fill = "#f5f5f2", color = NA),
+    plot.title = element_text(size = 14, hjust = 0.5, color = "#4e4d47"),
+    legend.title = element_text(size = 8),
+    legend.text = element_text(size = 8)
+  )
+
+
