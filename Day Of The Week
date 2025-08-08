@@ -1,0 +1,40 @@
+
+#Per airline
+Delays <- airlines %>%
+  group_by(Airline)%>%
+  summarise(Total = sum(Delay))
+
+bar_plot <- ggplot(Delays, aes(x = Airline, y = Total)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Per Airline Delay",
+       x = "Airline",
+       y = "Delays") +
+  theme_minimal()
+
+
+#Day of the week
+Days <- airlines %>%
+  mutate(DAYS = weekdays(DayOfWeek)) %>%
+  group_by(DAYS)%>%
+  summarise(Total = sum(Delay))
+
+ggplot(Days, aes(x = DAYS, y = Total)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Simple Bar Plot",
+       x = "Category",
+       y = "Value") +
+  theme_minimal()
+
+airlines %>%
+  mutate(DAYS = weekdays(DayOfWeek)) %>% 
+  group_by(Airline, DAYS) %>%
+  summarise(Total = sum(Delay)) %>%
+  ggplot(aes(x = DAYS, y = Total, fill = Airline)) + # Fill by airline if you want colors per airline
+  geom_bar(stat = "identity") +
+  facet_wrap(~ Airline, ncol = 3) + # Arrange in 3 columns, adjust as needed
+  labs(title = "Average Flight Delays by Airline and Day of Week",
+       x = "Day of Week", y = "Average Delay (Minutes)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), # Rotate labels if needed
+        strip.text = element_text(size = 8)) + # Adjust facet label size
+  guides(fill = "none") # Hide redundant legend if using fill
