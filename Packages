@@ -11,7 +11,17 @@ install.packages("lubridate")
 install.packages("chron")
 install.packages("broom")
 install.packages("ggpubr")
-
+install.packages("reshape2")
+install.packages("plotly")
+install.packages("waffle") ## for LDgraph
+install.packages("ggthemes") ## for LDgraph
+install.packages('giscoR')
+# Install the tidycensus package
+install.packages("tidycensus")
+# Install the tigris package
+install.packages("tigris")
+# Load the package (do this every time you start a new R session and want to use it)
+library(reshape2) # for the melt function
 library(broom)
 library(ggpubr)
 library(lubridate)
@@ -26,20 +36,18 @@ library(skimr)
 library(janitor)
 library(chron)
 library(readr)
-
-
-install.packages("waffle") ## for LDgraph
-install.packages("ggthemes") ## for LDgraph
 library(reshape2)
 library(plotly)
-
-install.packages("waffle") ## for LDgraph
-install.packages("ggthemes") ## for LDgraph
 library(waffle)
 library(ggthemes)
-
+library(maps)
+library(giscoR)
+library(mapproj)
+library(fiftystater)
+library(sf) #just the US
+library(tidycensus) # Load the tidycensus package
+library(tigris) # Load the tigris package
 # Get the world polygon and extract UK
-install.packages('giscoR')
 
 
 
