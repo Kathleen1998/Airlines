@@ -1,0 +1,17 @@
+## reading files------------------------------
+FullAirlines <- read_csv("Airlines2.csv")
+airports <- read_csv("airports.csv")
+missports <- read_csv("missingports4.csv")
+View(airports)
+
+##Cleaning --------------------------------
+
+airlines[duplicated(airlines), ]
+
+Airlines <- na.omit(airlines)
+
+n_distinct(airlines$id) #539383
+n_distinct(airlines$Airline) #18
+n_distinct(airlines$AirportFrom) #293
+n_distinct(airlines$AirportTo)
+n_distinct(airlines$Airline)
