@@ -1,0 +1,44 @@
+plot(Total ~ DAYS, data = Days)
+AirModel <- lm(Delay ~ DayOfWeek + Time + Length + Airline, data = airlines)
+summary(AirModel)
+#simple model building
+
+set.seed(123)
+version2 <- airlines[sample(nrow(airlines), 250000),]
+
+plot(Total ~ DAYS, data = Days)
+AirModel <- lm(Delay ~ DayOfWeek + Time + Length + Airline, data = airlines)
+summary(AirModel)
+## breaking down data set for Training and for Testing
+
+set.seed(123) ## helps to keep the same random selection everytime
+sample_size <- floor(0.8 * nrow(FullAirlines)) ## Taking 80 percent of the row from the dataset
+train_indices <- sample(seq_len(nrow(FullAirlines)),size = sample_size) #this is randomizing which rows I chose 
+
+train <- FullAirlines[train_indices, ] # this is selecting all of the rows that were randomly selected
+test <- FullAirlines[-train_indices, ] # this selects all the rows that werent selected in the randomization 
+
+DelayModel <- glm(Delay ~ DayOfWeek + Time + Length, data = train_data, family = binomial)
+summary(DelayModel) # to see the coefficient
+
+#Makes some predictions
+prediction_df <- predict(DelayModel, newdata = test, type = "response" )
+head(prediction_df)
+
+#Turning prediction into binary
+predict_binary <- ifelse(prediction_df > 0.5, 1, 0)
+
+#confusion matrix
+table(predicted = predict_binary, actual = test$Delay)
+
+AirlinesModel <- test
+
+AirlinesModel$prediction_df <- predict(DelayModel, newdata = test, type = "response" )
+AirlinesModel$predict_binary <- ifelse(AirlinesModel$prediction_df > 0.5, 1, 0)
+
+library(caret)
+conf_matrix <- table(Predicted = AirlinesModel$predict_binary , Actual = AirlinesModel$Delay)
+fourfoldplot(conf_matrix, color = c("firebrick", "steelblue"),
+             main = "Confusion Matrix")
+
+
