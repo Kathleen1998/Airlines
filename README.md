@@ -70,7 +70,19 @@ ToPortDelay3 <- ToPortDelay3 %>%
 ```
 <img width="633" height="421" alt="image" src="https://github.com/user-attachments/assets/bc556d9b-a93d-4d9c-9fe5-c727f4cdbcf8" />
 
+#Per airline
+```
+Delays <- airlines %>%
+  group_by(Airline)%>%
+  summarise(Total = sum(Delay))
 
+bar_plot <- ggplot(Delays, aes(x = Airline, y = Total)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Per Airline Delay",
+       x = "Airline",
+       y = "Delays") +
+  theme_minimal()
+```
 <img width="876" height="695" alt="image" src="https://github.com/user-attachments/assets/00d4eed0-a003-45dc-9a1f-1fc88dc41dd7" />
 
 Delays vs Total Flight
