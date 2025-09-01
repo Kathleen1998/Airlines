@@ -24,7 +24,50 @@ https://www.kaggle.com/datasets/jimschacko/airlines-dataset-to-predict-a-delay
 
 <img width="633" height="419" alt="image" src="https://github.com/user-attachments/assets/8e790768-4caf-455f-a221-cdff9611fbfa" />
 
+```
+USA <- gisco_get_countries(country = "USA", resolution = 1) ## SF spatial dataset; creating the shape of the us
+US  <- st_as_sf(maps::map("state", fill=TRUE, plot =FALSE))
+US <- states(cb = TRUE, resolution = "20m") %>%
+  shift_geometry()
+data <- world.cities %>% filter(country.etc == "UK")
 
+# Create breaks for the color scale
+mybreaks <- c(5,50,500,5000, 10000)
+
+# The hopeful answer to my prayers 
+ToPortDelay3 <- ToPortDelay2
+Port_sf <- st_as_sf(ToPortDelay2, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+PortShift<- shift_geometry(Port_sf, position = "below")
+# Download US county geo data to reproduce this example but filter out US territories  
+tigcounties <- counties(cb = TRUE, resolution = "5m", year = 2020)
+tigcounties <- tigcounties[as.numeric(tigcounties$STATEFP) < 60, ]
+
+tigstates <- states(cb = FALSE, resolution = "5m", year = 2020)
+tigstates <- tigstates[as.numeric(tigstates$STATEFP) <= 60, ]
+
+
+
+geo_shifted <- shift_geometry(
+  tigcounties,
+  position = "below", # other option: "outside"
+  preserve_area = FALSE
+)
+
+# Example: shift Alaska and Hawaii manually (approximate)
+ToPortDelay3 <- ToPortDelay3 %>%
+  mutate(
+    lon_shifted = case_when(
+      STATE == "AK" ~ LONGITUDE + 35,  # Alaska
+      STATE == "HI" ~ LONGITUDE + 52,  # Hawaii
+      TRUE ~ LONGITUDE
+    ),
+    lat_shifted = case_when(
+      STATE == "AK" ~ LATITUDE - 15,   # Alaska
+      STATE == "HI" ~ LATITUDE - 5,    # Hawaii
+      TRUE ~ LATITUDE
+    )
+  )
+```
 <img width="633" height="421" alt="image" src="https://github.com/user-attachments/assets/bc556d9b-a93d-4d9c-9fe5-c727f4cdbcf8" />
 
 
