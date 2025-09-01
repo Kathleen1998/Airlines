@@ -17,8 +17,41 @@ Screenshots or GIFs (if applicable). Visuals are very helpful!
 
 https://www.kaggle.com/datasets/jimschacko/airlines-dataset-to-predict-a-delay
 
+##Average Flight Delays By Airline s and Day of Week
+
+```
+airlines %>%
+  mutate(DAYS = weekdays(DayOfWeek)) %>% 
+  group_by(Airline, DAYS) %>%
+  summarise(Total = sum(Delay)) %>%
+  ggplot(aes(x = DAYS, y = Total, fill = Airline)) + # Fill by airline if you want colors per airline
+  geom_bar(stat = "identity") +
+  facet_wrap(~ Airline, ncol = 3) + # Arrange in 3 columns, adjust as needed
+  labs(title = "Average Flight Delays by Airline and Day of Week",
+       x = "Day of Week", y = "Average Delay (Minutes)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), # Rotate labels if needed
+        strip.text = element_text(size = 8)) + # Adjust facet label size
+  guides(fill = "none") # Hide redundant legend if using fill
+
+```
+
 <img width="882" height="699" alt="image" src="https://github.com/user-attachments/assets/a2bcac76-8c51-4a12-8487-f403bcbd200a" />
 
+#Day of the week
+```
+Days <- airlines %>%
+  mutate(DAYS = weekdays(DayOfWeek)) %>%
+  group_by(DAYS)%>%
+  summarise(Total = sum(Delay))
+
+ggplot(Days, aes(x = DAYS, y = Total)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Delay Per Day",
+       x = "Category",
+       y = "Value") +
+  theme_minimal()
+```
 <img width="636" height="504" alt="image" src="https://github.com/user-attachments/assets/dca36dd2-8653-451a-9402-af1289dcc650" />
 
 
@@ -127,7 +160,56 @@ plotly_object
 
 
 
+##Prediction Model
 
+```
+#Prediction ---------------------------------------------
+
+plot(Total ~ DAYS, data = Days)
+AirModel <- lm(Delay ~ DayOfWeek + Time + Length + Airline, data = airlines)
+summary(AirModel)
+#simple model building
+
+set.seed(123)
+version2 <- airlines[sample(nrow(airlines), 250000),]
+
+plot(Total ~ DAYS, data = Days)
+AirModel <- lm(Delay ~ DayOfWeek + Time + Length + Airline, data = airlines)
+summary(AirModel)
+## breaking down data set for Training and for Testing
+
+set.seed(123) ## helps to keep the same random selection everytime
+sample_size <- floor(0.8 * nrow(FullAirlines)) ## Taking 80 percent of the row from the dataset
+train_indices <- sample(seq_len(nrow(FullAirlines)),size = sample_size) #this is randomizing which rows I chose 
+
+train <- FullAirlines[train_indices, ] # this is selecting all of the rows that were randomly selected
+test <- FullAirlines[-train_indices, ] # this selects all the rows that werent selected in the randomization 
+
+DelayModel <- glm(Delay ~ DayOfWeek + Time + Length, data = train_data, family = binomial)
+summary(DelayModel) # to see the coefficient
+
+#Makes some predictions
+prediction_df <- predict(DelayModel, newdata = test, type = "response" )
+head(prediction_df)
+
+#Turning prediction into binary
+predict_binary <- ifelse(prediction_df > 0.5, 1, 0)
+
+#confusion matrix
+table(predicted = predict_binary, actual = test$Delay)
+
+AirlinesModel <- test
+
+AirlinesModel$prediction_df <- predict(DelayModel, newdata = test, type = "response" )
+AirlinesModel$predict_binary <- ifelse(AirlinesModel$prediction_df > 0.5, 1, 0)
+
+library(caret)
+conf_matrix <- table(Predicted = AirlinesModel$predict_binary , Actual = AirlinesModel$Delay)
+fourfoldplot(conf_matrix, color = c("firebrick", "steelblue"),
+             main = "Confusion Matrix")
+
+
+```
 
 
 
