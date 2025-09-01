@@ -73,8 +73,45 @@ ToPortDelay3 <- ToPortDelay3 %>%
 
 <img width="876" height="695" alt="image" src="https://github.com/user-attachments/assets/00d4eed0-a003-45dc-9a1f-1fc88dc41dd7" />
 
+Delays vs Total Flight
+```
+Total <- table(airlines$Airline)
+Total_df <- as.data.frame(my_table)
+
+CountFlight <- ggplot(Total_df, aes(x = Var1, y = Freq)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Total Flights",
+       x = "Flights",
+       y = "Airline") +
+  theme_minimal()
 
 
+Delays2 <- airlines %>%
+  group_by(Airline)%>%
+  summarise(Total = sum(Delay))
+
+
+Aline <- (Total_df$Var1)
+
+Atotal <- (Total_df$Freq)
+
+Adelay <- (Delays$Total)
+
+overLap <- data.frame(Aline, Atotal, Adelay)
+
+overLap %>%
+  melt(value.name = 'DelaysVsFlights',id.vars = 'Aline',variable.name = 'Airlines')  %>%
+  ggplot(aes(x=Aline,y=DelaysVsFlights,fill=Airlines))+
+  geom_col(position = position_jitterdodge(dodge.width = 0.5,jitter.height = 0,jitter.width = 0,seed = 25)) -> gg_output
+
+
+plotly_object <- plotly::ggplotly(gg_output)
+
+plotly_object
+
+
+```
+<img width="910" height="732" alt="delaysnondelays" src="https://github.com/user-attachments/assets/791d877f-1983-4478-8e19-aede7bae772e" />
 
 
 
