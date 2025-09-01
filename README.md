@@ -54,7 +54,18 @@ ggplot(Days, aes(x = DAYS, y = Total)) +
 ```
 <img width="636" height="504" alt="image" src="https://github.com/user-attachments/assets/dca36dd2-8653-451a-9402-af1289dcc650" />
 
+##Total Flgihts
+```
+Total <- table(airlines$Airline)
+Total_df <- as.data.frame(my_table)
 
+CountFlight <- ggplot(Total_df, aes(x = Var1, y = Freq)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Total Flights",
+       x = "Flights",
+       y = "Airline") +
+  theme_minimal()
+  ```
 <img width="633" height="419" alt="image" src="https://github.com/user-attachments/assets/8e790768-4caf-455f-a221-cdff9611fbfa" />
 
 ```
