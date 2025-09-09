@@ -37,6 +37,9 @@ airlines %>%
 ```
 
 <img width="882" height="699" alt="image" src="https://github.com/user-attachments/assets/a2bcac76-8c51-4a12-8487-f403bcbd200a" />
+This graph illustrates a significant decrease in airline delays on Wednesdays. This trend appears to be consistent across all airlines in the dataset, with delays reaching their lowest point on this day. In contrast, Sundays and Mondays consistently show the highest number of delays throughout the week.
+While the dataset doesn't specify the exact causes of these delays, the consistent pattern suggests that human factors may play a role, particularly at the beginning of the week. Factors such as pilot and crew availability, air traffic, and maintenance issues are often influenced by the weekly cycle.
+To mitigate this issue and more evenly distribute delays, airlines could consider implementing staggered schedules for their flight crews, allowing them to begin their work week on different days. This could help smooth out the peaks in delays seen on Sundays and Mondays.
 
 #Day of the week
 ```
@@ -128,6 +131,7 @@ bar_plot <- ggplot(Delays, aes(x = Airline, y = Total)) +
   theme_minimal()
 ```
 <img width="876" height="695" alt="image" src="https://github.com/user-attachments/assets/00d4eed0-a003-45dc-9a1f-1fc88dc41dd7" />
+South west with a significant amount of delays, followed by delta , skywest the american airlines, like I previously mentioned I suggest these 3 airlines to be the first to roll out the staggered schedules for their flight crews
 
 Delays vs Total Flight
 ```
@@ -169,6 +173,7 @@ plotly_object
 ```
 <img width="910" height="732" alt="delaysnondelays" src="https://github.com/user-attachments/assets/791d877f-1983-4478-8e19-aede7bae772e" />
 
+This graph shows the amount of flights per airline (Atotal) Airline total in the reddish color with the amount of delays (Adelay) Airline delays in the teal color. Airlines WN (Southwest Airlines) has a significant amount of delays with over half of their flights having delays 
 
 
 
