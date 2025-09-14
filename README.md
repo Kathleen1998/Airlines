@@ -34,6 +34,10 @@ airlines %>%
         strip.text = element_text(size = 8)) + # Adjust facet label size
   guides(fill = "none") # Hide redundant legend if using fill
 
+
+# Analyzes flight delay data to visualize and compare the total delays
+# for each airline across different days of the week. The goal is to identify
+# which airlines or days have the highest overall delays
 ```
 
 <img width="882" height="699" alt="image" src="https://github.com/user-attachments/assets/a2bcac76-8c51-4a12-8487-f403bcbd200a" />
@@ -54,6 +58,7 @@ ggplot(Days, aes(x = DAYS, y = Total)) +
        x = "Category",
        y = "Value") +
   theme_minimal()
+## Analyzes flight delay data to visualize and compares the days to see wheater there are certain day with more or less delays
 ```
 <img width="636" height="504" alt="image" src="https://github.com/user-attachments/assets/dca36dd2-8653-451a-9402-af1289dcc650" />
 
@@ -68,10 +73,13 @@ CountFlight <- ggplot(Total_df, aes(x = Var1, y = Freq)) +
        x = "Flights",
        y = "Airline") +
   theme_minimal()
+
+## Visualizing with a bar chart flight and airlines identify how many flight an airline has had
   ```
 <img width="633" height="419" alt="image" src="https://github.com/user-attachments/assets/8e790768-4caf-455f-a221-cdff9611fbfa" />
 
 ```
+##
 USA <- gisco_get_countries(country = "USA", resolution = 1) ## SF spatial dataset; creating the shape of the us
 US  <- st_as_sf(maps::map("state", fill=TRUE, plot =FALSE))
 US <- states(cb = TRUE, resolution = "20m") %>%
@@ -85,15 +93,17 @@ mybreaks <- c(5,50,500,5000, 10000)
 ToPortDelay3 <- ToPortDelay2
 Port_sf <- st_as_sf(ToPortDelay2, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
 PortShift<- shift_geometry(Port_sf, position = "below")
+
 # Download US county geo data to reproduce this example but filter out US territories  
 tigcounties <- counties(cb = TRUE, resolution = "5m", year = 2020)
 tigcounties <- tigcounties[as.numeric(tigcounties$STATEFP) < 60, ]
 
+#
 tigstates <- states(cb = FALSE, resolution = "5m", year = 2020)
 tigstates <- tigstates[as.numeric(tigstates$STATEFP) <= 60, ]
 
 
-
+#
 geo_shifted <- shift_geometry(
   tigcounties,
   position = "below", # other option: "outside"
@@ -129,6 +139,7 @@ bar_plot <- ggplot(Delays, aes(x = Airline, y = Total)) +
        x = "Airline",
        y = "Delays") +
   theme_minimal()
+# This creates a bar chart that visualizes airline and their delays in order to do a comparison with their total amount of flights
 ```
 <img width="876" height="695" alt="image" src="https://github.com/user-attachments/assets/00d4eed0-a003-45dc-9a1f-1fc88dc41dd7" />
 South west with a significant amount of delays, followed by delta , skywest the american airlines, like I previously mentioned I suggest these 3 airlines to be the first to roll out the staggered schedules for their flight crews
@@ -137,7 +148,6 @@ Delays vs Total Flight
 ```
 Total <- table(airlines$Airline)
 Total_df <- as.data.frame(my_table)
-
 CountFlight <- ggplot(Total_df, aes(x = Var1, y = Freq)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   labs(title = "Total Flights",
@@ -145,11 +155,9 @@ CountFlight <- ggplot(Total_df, aes(x = Var1, y = Freq)) +
        y = "Airline") +
   theme_minimal()
 
-
 Delays2 <- airlines %>%
   group_by(Airline)%>%
   summarise(Total = sum(Delay))
-
 
 Aline <- (Total_df$Var1)
 
@@ -164,11 +172,9 @@ overLap %>%
   ggplot(aes(x=Aline,y=DelaysVsFlights,fill=Airlines))+
   geom_col(position = position_jitterdodge(dodge.width = 0.5,jitter.height = 0,jitter.width = 0,seed = 25)) -> gg_output
 
-
 plotly_object <- plotly::ggplotly(gg_output)
-
 plotly_object
-
+##  creating a dual par chart plot to better visulaize an airline delays vs total flight to find who has a better ration to worse
 
 ```
 <img width="910" height="732" alt="delaysnondelays" src="https://github.com/user-attachments/assets/791d877f-1983-4478-8e19-aede7bae772e" />
@@ -179,18 +185,28 @@ This graph shows the amount of flights per airline (Atotal) Airline total in the
 
 #Prediction ---------------------------------------------
 ```
+This is a simple linear regression model to predict
+#          flight delays based on several key factors. It includes steps for
+#          data exploration and preparing the data for model training.
+# Build a linear regression model to predict 'Delay'.
+
+
 plot(Total ~ DAYS, data = Days)
 AirModel <- lm(Delay ~ DayOfWeek + Time + Length + Airline, data = airlines)
 summary(AirModel)
-#simple model building
 
 set.seed(123)
 version2 <- airlines[sample(nrow(airlines), 250000),]
+#This ensures that the 'random' sample we take is the same every single time
+# Randomly select a subset of 250,000 rows from the original dataset.
 
+## Here we are trying to predict Delays based off of Day of the week, time of the fligh, length of the flight
 plot(Total ~ DAYS, data = Days)
 AirModel <- lm(Delay ~ DayOfWeek + Time + Length + Airline, data = airlines)
 summary(AirModel)
 ## breaking down data set for Training and for Testing
+
+
 ```
 
 <img width="671" height="662" alt="image" src="https://github.com/user-attachments/assets/a25cac7f-bace-4a8e-b873-617de08604da" />
@@ -205,42 +221,73 @@ set.seed(123) ## helps to keep the same random selection everytime
 sample_size <- floor(0.8 * nrow(FullAirlines)) ## Taking 80 percent of the row from the dataset
 train_indices <- sample(seq_len(nrow(FullAirlines)),size = sample_size) #this is randomizing which rows I chose 
 
-train <- FullAirlines[train_indices, ] # this is selecting all of the rows that were randomly selected
-test <- FullAirlines[-train_indices, ] # this selects all the rows that werent selected in the randomization 
 
+# The training set is used to 'teach' the model to find patterns in the data.
+# It consists of all the randomly selected rows from the original dataset.
+train <- FullAirlines[train_indices, ] 
+test <- FullAirlines[-train_indices, ] 
+
+
+# The testing set is used to evaluate the model's predictive performance.
+# It contains all the rows that were NOT included in the training set,
+# ensuring the model has never seen this data before.
 DelayModel <- glm(Delay ~ DayOfWeek + Time + Length, data = train_data, family = binomial)
 summary(DelayModel) # to see the coefficient
+##
+
+
 ```
 <img width="643" height="375" alt="image" src="https://github.com/user-attachments/assets/233d98c7-24a7-4439-85a1-d2efb4061a1d" />
 
 ```
-#Makes some predictions
+# Use the trained model to predict the probability of a delay for each flight in
+# our unseen 'test' dataset. The 'response' type ensures the output is a probability
+# value between 0 and 1.
 prediction_df <- predict(DelayModel, newdata = test, type = "response" )
 head(prediction_df)
+
 ```
 <img width="559" height="42" alt="image" src="https://github.com/user-attachments/assets/1a6b0627-a6b0-4976-94a0-f7a4a6b3a07f" />
 
 
 ```
-#Turning prediction into binary
+# Convert the predicted probabilities into a binary classification (0 or 1). if the predicted probability of a delay
+# is greater than 50%, we classify it as a '1' (Delay), otherwise it's a '0'
 predict_binary <- ifelse(prediction_df > 0.5, 1, 0)
 
-#confusion matrix
+
+
+# confusion matrix to evaluate the model's performance.
+# This table compares our model's predictions to the actual outcomes in the
+# test dataset.
 table(predicted = predict_binary, actual = test$Delay)
 ```
 <img width="264" height="76" alt="image" src="https://github.com/user-attachments/assets/71ed82ba-c753-477a-a95e-930c5af49838" />
 
 ```
+#Create a copy of the test data to store our predictions.
 AirlinesModel <- test
 
+# Use the trained model to generate predicted probabilities for the test data.
+# We store these probabilities in a new column called 'prediction_df'.
 AirlinesModel$prediction_df <- predict(DelayModel, newdata = test, type = "response" )
 AirlinesModel$predict_binary <- ifelse(AirlinesModel$prediction_df > 0.5, 1, 0)
+##
 
+
+# Create a confusion matrix by comparing our model's binary predictions to the
+# actual outcomes in the test data. This is the primary tool for evaluating
+# a classification model's performance.
 library(caret)
 conf_matrix <- table(Predicted = AirlinesModel$predict_binary , Actual = AirlinesModel$Delay)
+
+# Use the fourfoldplot from the `caret` package to visualize the confusion matrix.
+# This plot displays the proportions of true positives, true negatives,
+# false positives, and false negatives, giving a quick and intuitive view of
+# the model's performance.
 fourfoldplot(conf_matrix, color = c("firebrick", "steelblue"),
              main = "Confusion Matrix")
-
+##
 ```
 
 
