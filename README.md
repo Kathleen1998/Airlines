@@ -88,22 +88,22 @@ data <- world.cities %>% filter(country.etc == "UK")
 
 # Create breaks for the color scale
 mybreaks <- c(5,50,500,5000, 10000)
+ToPortDelay2 <- ToPortDelay2[-9, ] # Removes the 9th row
+ToPortDelay2 <- ToPortDelay2[-87, ]
 
 # The hopeful answer to my prayers 
 ToPortDelay3 <- ToPortDelay2
 Port_sf <- st_as_sf(ToPortDelay2, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
 PortShift<- shift_geometry(Port_sf, position = "below")
-
 # Download US county geo data to reproduce this example but filter out US territories  
 tigcounties <- counties(cb = TRUE, resolution = "5m", year = 2020)
 tigcounties <- tigcounties[as.numeric(tigcounties$STATEFP) < 60, ]
 
-#
 tigstates <- states(cb = FALSE, resolution = "5m", year = 2020)
 tigstates <- tigstates[as.numeric(tigstates$STATEFP) <= 60, ]
 
 
-#
+
 geo_shifted <- shift_geometry(
   tigcounties,
   position = "below", # other option: "outside"
@@ -124,6 +124,54 @@ ToPortDelay3 <- ToPortDelay3 %>%
       TRUE ~ LATITUDE
     )
   )
+
+
+
+airports_shifted_sf <- st_as_sf(ToPortDelay3, coords = c("lon_shifted", "lat_shifted"), crs = 4326)
+
+st_crs(geo_shifted)
+st_crs(PortShift)
+
+
+
+
+tigcounties <- counties(cb = TRUE, resolution = "5m", year = 2020)
+tigcounties <- tigcounties[as.numeric(tigcounties$STATEFP) < 60, ]
+
+
+
+Port_sf <- st_as_sf(ToPortDelay2, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
+PortShift<- shift_geometry(Port_sf, position = "below",preserve_area = FALSE)
+
+
+theme_update(plot.title = element_text(hjust = 0.5))
+
+PortShift %>% 
+  ggplot() +
+  geom_sf(data = geo_shifted, fill = "grey80", color = "white") +
+  geom_sf(data = PortShift, color = "red", size = 1) +
+  geom_point(
+    aes( size = Total, geometry = geometry),
+    stat = "sf_coordinates"
+  ) +
+    theme_void() +
+  guides(colour = guide_legend()) +
+    ggtitle("Delays per airport in the USA") 
+  theme(
+    legend.position.inside = c(1, 0.6),
+    text = element_text(color = "#22211d"),
+    plot.margin = margin(r = 0.4, l = 0.1, unit = "cm"),
+    plot.background = element_rect(fill = "#f5f5f2", color = NA),
+    panel.background = element_rect(fill = "#f5f5f2", color = NA),
+    plot.title = element_text(size = 14, hjust = 0.5, color = "#4e4d47"),
+    legend.title = element_text(size = 8),
+    legend.text = element_text(size = 8)
+  )
+
+
+
+
+
 ```
 <img width="633" height="421" alt="image" src="https://github.com/user-attachments/assets/bc556d9b-a93d-4d9c-9fe5-c727f4cdbcf8" />
 
@@ -186,26 +234,20 @@ This graph shows the amount of flights per airline (Atotal) Airline total in the
 #Prediction ---------------------------------------------
 ```
 This is a simple linear regression model to predict
-#          flight delays based on several key factors. It includes steps for
-#          data exploration and preparing the data for model training.
-# Build a linear regression model to predict 'Delay'.
-
-
-plot(Total ~ DAYS, data = Days)
-AirModel <- lm(Delay ~ DayOfWeek + Time + Length + Airline, data = airlines)
-summary(AirModel)
+#flight delays based on several key factors. It includes steps for
+#data exploration and preparing the data for model training.
+#Build a linear regression model to predict 'Delay'.
 
 set.seed(123)
 version2 <- airlines[sample(nrow(airlines), 250000),]
-#This ensures that the 'random' sample we take is the same every single time
+#This ensures that the random sample we take is the same every single time
 # Randomly select a subset of 250,000 rows from the original dataset.
 
-## Here we are trying to predict Delays based off of Day of the week, time of the fligh, length of the flight
+
 plot(Total ~ DAYS, data = Days)
 AirModel <- lm(Delay ~ DayOfWeek + Time + Length + Airline, data = airlines)
 summary(AirModel)
-## breaking down data set for Training and for Testing
-
+## This is to predict Delays based off of Day of the week, time of the fligh, length of the flight
 
 ```
 
@@ -222,72 +264,69 @@ sample_size <- floor(0.8 * nrow(FullAirlines)) ## Taking 80 percent of the row f
 train_indices <- sample(seq_len(nrow(FullAirlines)),size = sample_size) #this is randomizing which rows I chose 
 
 
-# The training set is used to 'teach' the model to find patterns in the data.
-# It consists of all the randomly selected rows from the original dataset.
 train <- FullAirlines[train_indices, ] 
 test <- FullAirlines[-train_indices, ] 
+# The training set is used to 'teach' the model to find patterns in the data.
+# It consists of all the randomly selected rows from the original dataset.
 
 
-# The testing set is used to evaluate the model's predictive performance.
-# It contains all the rows that were NOT included in the training set,
-# ensuring the model has never seen this data before.
 DelayModel <- glm(Delay ~ DayOfWeek + Time + Length, data = train_data, family = binomial)
 summary(DelayModel) # to see the coefficient
-##
+# Then the testing set is used to evaluate the model's predictive performance.
+# It contains all the rows that were not included in the training set,
+# ensuring the model has never seen this data before.
 
 
 ```
 <img width="643" height="375" alt="image" src="https://github.com/user-attachments/assets/233d98c7-24a7-4439-85a1-d2efb4061a1d" />
 
 ```
-# Use the trained model to predict the probability of a delay for each flight in
-# our unseen 'test' dataset. The 'response' type ensures the output is a probability
-# value between 0 and 1.
+
 prediction_df <- predict(DelayModel, newdata = test, type = "response" )
 head(prediction_df)
-
+# Then using trained model to predict the probability of a delay for each flight in
+# the unseen 'test' dataset. The 'response' type ensures the output is a probability
+# value between 0 and 1.
 ```
 <img width="559" height="42" alt="image" src="https://github.com/user-attachments/assets/1a6b0627-a6b0-4976-94a0-f7a4a6b3a07f" />
 
 
 ```
+
+predict_binary <- ifelse(prediction_df > 0.5, 1, 0)
 # Convert the predicted probabilities into a binary classification (0 or 1). if the predicted probability of a delay
 # is greater than 50%, we classify it as a '1' (Delay), otherwise it's a '0'
-predict_binary <- ifelse(prediction_df > 0.5, 1, 0)
 
 
-
-# confusion matrix to evaluate the model's performance.
-# This table compares our model's predictions to the actual outcomes in the
-# test dataset.
 table(predicted = predict_binary, actual = test$Delay)
+# The confusion matrix to evaluate the model's performance.
+# This table compares our model's predictions to the actual outcomes in the test dataset.
 ```
 <img width="264" height="76" alt="image" src="https://github.com/user-attachments/assets/71ed82ba-c753-477a-a95e-930c5af49838" />
 
 ```
-#Create a copy of the test data to store our predictions.
-AirlinesModel <- test
 
-# Use the trained model to generate predicted probabilities for the test data.
-# We store these probabilities in a new column called 'prediction_df'.
+AirlinesModel <- test
+#Creating a copy of the test data to store our predictions.
+
 AirlinesModel$prediction_df <- predict(DelayModel, newdata = test, type = "response" )
 AirlinesModel$predict_binary <- ifelse(AirlinesModel$prediction_df > 0.5, 1, 0)
-##
+# Now using the trained model to generate predicted probabilities for the test data.
+# We store these probabilities in a new column called 'prediction_df'.
 
 
-# Create a confusion matrix by comparing our model's binary predictions to the
-# actual outcomes in the test data. This is the primary tool for evaluating
-# a classification model's performance.
 library(caret)
 conf_matrix <- table(Predicted = AirlinesModel$predict_binary , Actual = AirlinesModel$Delay)
+# Creating a confusion matrix by comparing our model's binary predictions to the
+# actual outcomes in the test data. This is the primary tool for evaluating a classification model's performance.
 
-# Use the fourfoldplot from the `caret` package to visualize the confusion matrix.
-# This plot displays the proportions of true positives, true negatives,
-# false positives, and false negatives, giving a quick and intuitive view of
-# the model's performance.
+
 fourfoldplot(conf_matrix, color = c("firebrick", "steelblue"),
              main = "Confusion Matrix")
-##
+
+# Lastly using a  fourfoldplot from the caret package to visualize the confusion matrix.
+# This plot displays the proportions of true positives, true negatives, false positives, and false negatives, giving
+# a quick and intuitive view of the model's performance.
 ```
 
 
