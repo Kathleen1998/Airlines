@@ -1,8 +1,5 @@
 # Airlines
-Figuring out air travel delays
-
 Analyzed a comprehensive dataset of airline and airport delays to identify key factors contributing to flight disruptions. Utilizing the R programming language, I developed statistical models to predict flight delays and visualize patterns. The project provided valuable insights into operational inefficiencies, which could inform strategic decision-making for airlines and airport management.
-
 
 What the project is. A clear, concise description.
 Analayze flight delays, predicting 
@@ -18,7 +15,7 @@ Screenshots or GIFs (if applicable). Visuals are very helpful!
 https://www.kaggle.com/datasets/jimschacko/airlines-dataset-to-predict-a-delay
 
 ##Average Flight Delays By Airline s and Day of Week
-
+<img width="882" height="699" alt="image" src="https://github.com/user-attachments/assets/a2bcac76-8c51-4a12-8487-f403bcbd200a" />
 ```
 airlines %>%
   mutate(DAYS = weekdays(DayOfWeek)) %>% 
@@ -34,16 +31,15 @@ airlines %>%
         strip.text = element_text(size = 8)) + # Adjust facet label size
   guides(fill = "none") # Hide redundant legend if using fill
 
-
 # Analyzes flight delay data to visualize and compare the total delays
 # for each airline across different days of the week. The goal is to identify
 # which airlines or days have the highest overall delays
 ```
-
-<img width="882" height="699" alt="image" src="https://github.com/user-attachments/assets/a2bcac76-8c51-4a12-8487-f403bcbd200a" />
-This graph illustrates a significant decrease in airline delays to. This trend appears to be consistent across all airlines in the dataset, with delays reaching their lowest point on this day. In contrast, Sundays and Mondays consistently show the highest number of delays throughout the week.
+  This graph illustrates a significant decrease in airline delays to. This trend appears to be consistent across all airlines in the dataset, with delays reaching their lowest point on this day. In contrast, Sundays and Mondays consistently show the highest number of delays throughout the week.
 While the dataset doesn't specify the exact causes of these delays, the consistent pattern suggests that human factors may play a role, particularly at the beginning of the week. Factors such as pilot and crew availability, air traffic, and maintenance issues are often influenced by the weekly cycle.
 To mitigate this issue and more evenly distribute delays, airlines could consider implementing staggered schedules for their flight crews, allowing them to begin their work week on different days. This could help smooth out the peaks in delays seen on Sundays and Mondays.
+
+
 
 #Day of the week
 ```
