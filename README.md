@@ -14,8 +14,13 @@ Screenshots or GIFs (if applicable). Visuals are very helpful!
 
 https://www.kaggle.com/datasets/jimschacko/airlines-dataset-to-predict-a-delay
 
-##Average Flight Delays By Airline s and Day of Week
+## Average Flight Delays By Airline s and Day of Week
 <img width="882" height="699" alt="image" src="https://github.com/user-attachments/assets/a2bcac76-8c51-4a12-8487-f403bcbd200a" />
+  This graph illustrates a significant decrease in airline delays to. This trend appears to be consistent across all airlines in the dataset, with delays reaching their lowest point on this day. In contrast, Sundays and Mondays consistently show the highest number of delays throughout the week.
+While the dataset doesn't specify the exact causes of these delays, the consistent pattern suggests that human factors may play a role, particularly at the beginning of the week. Factors such as pilot and crew availability, air traffic, and maintenance issues are often influenced by the weekly cycle.
+To mitigate this issue and more evenly distribute delays, airlines could consider implementing staggered schedules for their flight crews, allowing them to begin their work week on different days. This could help smooth out the peaks in delays seen on Sundays and Mondays.
+
+Code:
 ```
 airlines %>%
   mutate(DAYS = weekdays(DayOfWeek)) %>% 
@@ -35,13 +40,15 @@ airlines %>%
 # for each airline across different days of the week. The goal is to identify
 # which airlines or days have the highest overall delays
 ```
-  This graph illustrates a significant decrease in airline delays to. This trend appears to be consistent across all airlines in the dataset, with delays reaching their lowest point on this day. In contrast, Sundays and Mondays consistently show the highest number of delays throughout the week.
-While the dataset doesn't specify the exact causes of these delays, the consistent pattern suggests that human factors may play a role, particularly at the beginning of the week. Factors such as pilot and crew availability, air traffic, and maintenance issues are often influenced by the weekly cycle.
-To mitigate this issue and more evenly distribute delays, airlines could consider implementing staggered schedules for their flight crews, allowing them to begin their work week on different days. This could help smooth out the peaks in delays seen on Sundays and Mondays.
 
 
 
-#Day of the week
+
+## Day of the week
+<img width="636" height="504" alt="image" src="https://github.com/user-attachments/assets/dca36dd2-8653-451a-9402-af1289dcc650" />
+  This is a more macro view of airlines delays, showing a more obvious trend in less delays on one perticualr day of the week. Sundays having the most delays during the week totaling in 42,254 delays across all airline then Wendesday only having 23,615 a significant a 56.6% decresase in delay by the middle of the week. 
+
+Code:
 ```
 Days <- airlines %>%
   mutate(DAYS = weekdays(DayOfWeek)) %>%
@@ -56,12 +63,11 @@ ggplot(Days, aes(x = DAYS, y = Total)) +
   theme_minimal()
 ## Analyzes flight delay data to visualize and compares the days to see wheater there are certain day with more or less delays
 ```
-<img width="636" height="504" alt="image" src="https://github.com/user-attachments/assets/dca36dd2-8653-451a-9402-af1289dcc650" />
 
-## Totalality of airline delays
-This is a more macro view of airlines delays, showing a more obvious trend in less delays on one perticualr day of the week. Sundays having the most delays during the week totaling in 42,254 delays across all airline then Wendesday only having 23,615 a significant a 56.6% decresase in delay by the middle of the week. 
+## Map of Airports
+<img width="633" height="421" alt="image" src="https://github.com/user-attachments/assets/bc556d9b-a93d-4d9c-9fe5-c727f4cdbcf8" />
 
-
+Code:
 ```
 Total <- table(airlines$Airline)
 Total_df <- as.data.frame(my_table)
@@ -99,8 +105,6 @@ tigcounties <- tigcounties[as.numeric(tigcounties$STATEFP) < 60, ]
 tigstates <- states(cb = FALSE, resolution = "5m", year = 2020)
 tigstates <- tigstates[as.numeric(tigstates$STATEFP) <= 60, ]
 
-
-
 geo_shifted <- shift_geometry(
   tigcounties,
   position = "below", # other option: "outside"
@@ -123,23 +127,16 @@ ToPortDelay3 <- ToPortDelay3 %>%
   )
 
 
-
 airports_shifted_sf <- st_as_sf(ToPortDelay3, coords = c("lon_shifted", "lat_shifted"), crs = 4326)
 
 st_crs(geo_shifted)
 st_crs(PortShift)
 
-
-
-
 tigcounties <- counties(cb = TRUE, resolution = "5m", year = 2020)
 tigcounties <- tigcounties[as.numeric(tigcounties$STATEFP) < 60, ]
 
-
-
 Port_sf <- st_as_sf(ToPortDelay2, coords = c("LONGITUDE", "LATITUDE"), crs = 4326)
 PortShift<- shift_geometry(Port_sf, position = "below",preserve_area = FALSE)
-
 
 theme_update(plot.title = element_text(hjust = 0.5))
 
@@ -165,17 +162,17 @@ PortShift %>%
     legend.text = element_text(size = 8)
   )
 
-
-
-
-
 ```
-<img width="633" height="421" alt="image" src="https://github.com/user-attachments/assets/bc556d9b-a93d-4d9c-9fe5-c727f4cdbcf8" />
 
 
 
 
-Delays vs Total Flight
+## Delays vs Total Flight
+<img width="910" height="732" alt="delaysnondelays" src="https://github.com/user-attachments/assets/791d877f-1983-4478-8e19-aede7bae772e" />
+
+This visualizes both the total amount of flight and delays per airline. There is an average of 29,965 flights, with the top carriers being WN (Southwest) at 94,097 flights (214.0% more than the average) and DL (Delta Airlines) at 60,940 flights (103.4%); conversely, the least frequent are HA (Hawaiian Airlines) with 5,578 (-81.4% less )and F9 (Frontier Airlines) with 6,456 (-78.5% less) flights. Given that Southwest with 69.7% of its flights delayed, CO (Continental Airlines) with 56.6% delayed, and B6 (JetBlue) with 46.7% delayed, show a significant amount of delays, I suggest the high-volume and high-delay airlines—Southwest, Delta, and SkyWest—should be the first to roll out staggered schedules for their flight crews.
+
+Code:
 ```
 Total <- table(airlines$Airline)
 Total_df <- as.data.frame(my_table)
@@ -208,13 +205,10 @@ plotly_object
 ##  creating a dual par chart plot to better visulaize an airline delays vs total flight to find who has a better ration to worse
 
 ```
-<img width="910" height="732" alt="delaysnondelays" src="https://github.com/user-attachments/assets/791d877f-1983-4478-8e19-aede7bae772e" />
-
-This visualizes both the total amount of flight and delays per airline. There is an average of 29,965 flights, with the top carriers being WN (Southwest) at 94,097 flights (214.0% more than the average) and DL (Delta Airlines) at 60,940 flights (103.4%); conversely, the least frequent are HA (Hawaiian Airlines) with 5,578 (-81.4% less )and F9 (Frontier Airlines) with 6,456 (-78.5% less) flights. Given that Southwest with 69.7% of its flights delayed, CO (Continental Airlines) with 56.6% delayed, and B6 (JetBlue) with 46.7% delayed, show a significant amount of delays, I suggest the high-volume and high-delay airlines—Southwest, Delta, and SkyWest—should be the first to roll out staggered schedules for their flight crews.
 
 
 
-#Prediction ---------------------------------------------
+# Prediction ---------------------------------------------
 ```
 This is a simple linear regression model to predict
 #flight delays based on several key factors. It includes steps for
