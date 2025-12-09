@@ -79,11 +79,6 @@ CountFlight <- ggplot(Total_df, aes(x = Var1, y = Freq)) +
 
 ## Visualizing with a bar chart flight and airlines identify how many flight an airline has had
   ```
-<img width="633" height="419" alt="image" src="https://github.com/user-attachments/assets/8e790768-4caf-455f-a221-cdff9611fbfa" />
-
-## Per Airline
-This visualies the amount of flights per airline. With and average of 29965 fligths. the top airlines with the most flight being WN (South West) with 94097  103% more than the average, then DL () with 60,940 64% more. On the oposite side is HA (Hawaii) with 5578 and f9 with 6456 flights
-
 ```
 ##
 USA <- gisco_get_countries(country = "USA", resolution = 1) ## SF spatial dataset; creating the shape of the us
@@ -181,22 +176,8 @@ PortShift %>%
 ```
 <img width="633" height="421" alt="image" src="https://github.com/user-attachments/assets/bc556d9b-a93d-4d9c-9fe5-c727f4cdbcf8" />
 
-#Per airline
-```
-Delays <- airlines %>%
-  group_by(Airline)%>%
-  summarise(Total = sum(Delay))
 
-bar_plot <- ggplot(Delays, aes(x = Airline, y = Total)) +
-  geom_bar(stat = "identity", fill = "steelblue") +
-  labs(title = "Per Airline Delay",
-       x = "Airline",
-       y = "Delays") +
-  theme_minimal()
-# This creates a bar chart that visualizes airline and their delays in order to do a comparison with their total amount of flights
-```
-<img width="876" height="695" alt="image" src="https://github.com/user-attachments/assets/00d4eed0-a003-45dc-9a1f-1fc88dc41dd7" />
-South west with a significant amount of delays, followed by delta , skywest the american airlines, like I previously mentioned I suggest these 3 airlines to be the first to roll out the staggered schedules for their flight crews
+
 
 Delays vs Total Flight
 ```
@@ -233,7 +214,7 @@ plotly_object
 ```
 <img width="910" height="732" alt="delaysnondelays" src="https://github.com/user-attachments/assets/791d877f-1983-4478-8e19-aede7bae772e" />
 
-This graph shows the amount of flights per airline (Atotal) Airline total in the reddish color with the amount of delays (Adelay) Airline delays in the teal color. Airlines WN (Southwest Airlines) has a significant amount of delays with over half of their flights having delays 
+This visualizes both the total amount of flight and delays per airline. There is an average of 29,965 flights, with the top carriers being WN (Southwest) at 94,097 flights (214.0% more than the average) and DL (Delta Airlines) at 60,940 flights (103.4%); conversely, the least frequent are HA (Hawaiian Airlines) with 5,578 (-81.4% less )and F9 (Frontier Airlines) with 6,456 (-78.5% less) flights. Given that Southwest with 69.7% of its flights delayed, CO (Continental Airlines) with 56.6% delayed, and B6 (JetBlue) with 46.7% delayed, show a significant amount of delays, I suggest the high-volume and high-delay airlines—Southwest, Delta, and SkyWest—should be the first to roll out staggered schedules for their flight crews.
 
 
 
