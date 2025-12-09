@@ -41,7 +41,7 @@ airlines %>%
 ```
 
 <img width="882" height="699" alt="image" src="https://github.com/user-attachments/assets/a2bcac76-8c51-4a12-8487-f403bcbd200a" />
-This graph illustrates a significant decrease in airline delays on Wednesdays. This trend appears to be consistent across all airlines in the dataset, with delays reaching their lowest point on this day. In contrast, Sundays and Mondays consistently show the highest number of delays throughout the week.
+This graph illustrates a significant decrease in airline delays to. This trend appears to be consistent across all airlines in the dataset, with delays reaching their lowest point on this day. In contrast, Sundays and Mondays consistently show the highest number of delays throughout the week.
 While the dataset doesn't specify the exact causes of these delays, the consistent pattern suggests that human factors may play a role, particularly at the beginning of the week. Factors such as pilot and crew availability, air traffic, and maintenance issues are often influenced by the weekly cycle.
 To mitigate this issue and more evenly distribute delays, airlines could consider implementing staggered schedules for their flight crews, allowing them to begin their work week on different days. This could help smooth out the peaks in delays seen on Sundays and Mondays.
 
@@ -62,7 +62,10 @@ ggplot(Days, aes(x = DAYS, y = Total)) +
 ```
 <img width="636" height="504" alt="image" src="https://github.com/user-attachments/assets/dca36dd2-8653-451a-9402-af1289dcc650" />
 
-##Total Flgihts
+## Totalality of airline delays
+This is a more macro view of airlines delays, showing a more obvious trend in less delays on one perticualr day of the week. Sundays having the most delays during the week totaling in 42,254 delays across all airline then Wendesday only having 23,615 a significant a 56.6% decresase in delay by the middle of the week. 
+
+
 ```
 Total <- table(airlines$Airline)
 Total_df <- as.data.frame(my_table)
@@ -77,6 +80,9 @@ CountFlight <- ggplot(Total_df, aes(x = Var1, y = Freq)) +
 ## Visualizing with a bar chart flight and airlines identify how many flight an airline has had
   ```
 <img width="633" height="419" alt="image" src="https://github.com/user-attachments/assets/8e790768-4caf-455f-a221-cdff9611fbfa" />
+
+## Per Airline
+This visualies the amount of flights per airline. With and average of 29965 fligths. the top airlines with the most flight being WN (South West) with 94097  103% more than the average, then DL () with 60,940 64% more. On the oposite side is HA (Hawaii) with 5578 and f9 with 6456 flights
 
 ```
 ##
