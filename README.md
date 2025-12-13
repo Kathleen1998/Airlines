@@ -248,4 +248,74 @@ test <- FullAirlines[-train_indices, ]
 # It consists of all the randomly selected rows from the original dataset.
 
 DelayModel <- glm(Delay ~ DayOfWeek + Time + Length, data = train_data, family = binomial)
-<img width="1040" height="733" alt="Prediction Model 1" src="https://github.com/user-attachments/assets/7143b1dc-7f82-43ac-adf7-1ee5ccbdbdf0" 
+summary(DelayModel) # to see the coefficient
+# Then the testing set is used to evaluate the model's predictive performance.
+# It contains all the rows that were not included in the training set,
+# ensuring the model has never seen this data before.
+```
+
+<img width="1040" height="733" alt="Prediction Model 1" src="https://github.com/user-attachments/assets/7143b1dc-7f82-43ac-adf7-1ee5ccbdbdf0" />
+
+```
+prediction_df <- predict(DelayModel, newdata = test, type = "response" )
+head(prediction_df)
+# Then using trained model to predict the probability of a delay for each flight in
+# the unseen 'test' dataset. The 'response' type ensures the output is a probability
+# value between 0 and 1.
+
+```
+
+
+```
+predict_binary <- ifelse(prediction_df > 0.5, 1, 0)
+# Convert the predicted probabilities into a binary classification (0 or 1). if the predicted probability of a delay
+# is greater than 50%, we classify it as a '1' (Delay), otherwise it's a '0'
+
+
+table(predicted = predict_binary, actual = test$Delay)
+# The confusion matrix to evaluate the model's performance.
+# This table compares our model's predictions to the actual outcomes in the test dataset.
+```
+
+
+```
+AirlinesModel <- test
+#Creating a copy of the test data to store our predictions.
+
+AirlinesModel$prediction_df <- predict(DelayModel, newdata = test, type = "response" )
+AirlinesModel$predict_binary <- ifelse(AirlinesModel$prediction_df > 0.5, 1, 0)
+# Now using the trained model to generate predicted probabilities for the test data.
+# We store these probabilities in a new column called 'prediction_df'.
+
+
+library(caret)
+conf_matrix <- table(Predicted = AirlinesModel$predict_binary , Actual = AirlinesModel$Delay)
+# Creating a confusion matrix by comparing our model's binary predictions to the
+# actual outcomes in the test data. This is the primary tool for evaluating a classification model's performance.
+
+
+fourfoldplot(conf_matrix, color = c("firebrick", "steelblue"),
+             main = "Confusion Matrix")
+
+# Lastly using a  fourfoldplot from the caret package to visualize the confusion matrix.
+# This plot displays the proportions of true positives, true negatives, false positives, and false negatives, giving
+# a quick and intuitive view of the model's performance.
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
