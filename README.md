@@ -1,5 +1,5 @@
 # Airlines
-Analyzed a comprehensive dataset of airline and airport delays to identify key factors contributing to flight disruptions. Utilizing the R programming language, I developed statistical models to predict flight delays and visualize patterns. The project provided valuable insights into operational inefficiencies, which could inform strategic decision-making for airlines and airport management.
+Analyzed a comprehensive dataset of airline and airport delays to identify key factors contributing to flight disruptions. Utilizing the R programming language, I developed statistical models to predict flight delays and visualize patterns. The project provided valuable insights into operational inefficiencies, which could inform strategic decision-making for airlines and airport management. 
 
 What the project is. A clear, concise description.
 Analayze flight delays, predicting 
