@@ -264,21 +264,19 @@ head(prediction_df)
 # value between 0 and 1.
 
 ```
+## Confusion Matrix
 
+<img width="1040" height="733" alt="Confusion Matrix" src="https://github.com/user-attachments/assets/6d9f01fc-5046-4bb5-b17d-cec0f92b61f4" />
 
 ```
 predict_binary <- ifelse(prediction_df > 0.5, 1, 0)
 # Convert the predicted probabilities into a binary classification (0 or 1). if the predicted probability of a delay
 # is greater than 50%, we classify it as a '1' (Delay), otherwise it's a '0'
 
-
 table(predicted = predict_binary, actual = test$Delay)
 # The confusion matrix to evaluate the model's performance.
 # This table compares our model's predictions to the actual outcomes in the test dataset.
-```
 
-
-```
 AirlinesModel <- test
 #Creating a copy of the test data to store our predictions.
 
@@ -296,7 +294,6 @@ conf_matrix <- table(Predicted = AirlinesModel$predict_binary , Actual = Airline
 
 fourfoldplot(conf_matrix, color = c("firebrick", "steelblue"),
              main = "Confusion Matrix")
-
 # Lastly using a  fourfoldplot from the caret package to visualize the confusion matrix.
 # This plot displays the proportions of true positives, true negatives, false positives, and false negatives, giving
 # a quick and intuitive view of the model's performance.
