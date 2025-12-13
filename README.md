@@ -214,8 +214,15 @@ plotly_object
 <img width="671" height="662" alt="image" src="https://github.com/user-attachments/assets/a25cac7f-bace-4a8e-b873-617de08604da" />
 
 This is a general linear regression model to predict flight delays based on several key factors. It includes steps for data exploration and preparing the data for model training.
-
 Based on Day of the week, departure time, length of the flight, and airline we    will be deliberating which factors play a key role.
+
+Above is the result after inputting the data into the regression model. Looking at DayOfWeek, Time, and Length first. 
+This model is telling us that Dayofweek has an estimate of -6.457e-03 (0.006457) which means by an increase of one day there is a 0.7% increase in the less likelihood of a delay. In simpler terms as the days go on there will be a compounded decrease in the chance of a delay. 
+
+# Interpreting the numbers
+Day of week (M-S). E-0.006457 = 0.993 | 0.993 - 1 = -0.007 | -0.007*100 = -0.7% 
+Time(mintutes from zero) e0.000273 = 1.000273037 | 1.000273037 - 1 = 0.00111662 | 0.00111662* 100 = .11% 
+Length(Length of Flight) 
 
 Code:
 ```
