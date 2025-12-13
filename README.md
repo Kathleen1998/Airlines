@@ -208,13 +208,17 @@ plotly_object
 
 
 
-# Prediction ---------------------------------------------
-```
-This is a simple linear regression model to predict
-#flight delays based on several key factors. It includes steps for
-#data exploration and preparing the data for model training.
-#Build a linear regression model to predict 'Delay'.
 
+# Genralized Linear Model // Making predictions
+
+<img width="671" height="662" alt="image" src="https://github.com/user-attachments/assets/a25cac7f-bace-4a8e-b873-617de08604da" />
+
+This is a general linear regression model to predict flight delays based on several key factors. It includes steps for data exploration and preparing the data for model training.
+
+Based on Day of the week, departure time, length of the flight, and airline we    will be deliberating which factors play a key role.
+
+Code:
+```
 set.seed(123)
 version2 <- airlines[sample(nrow(airlines), 250000),]
 #This ensures that the random sample we take is the same every single time
@@ -228,88 +232,20 @@ summary(AirModel)
 
 ```
 
-<img width="671" height="662" alt="image" src="https://github.com/user-attachments/assets/a25cac7f-bace-4a8e-b873-617de08604da" />
+## Trained Model // Testing Set
 
+<img width="643" height="375" alt="image" src="https://github.com/user-attachments/assets/233d98c7-24a7-4439-85a1-d2efb4061a1d" />
 
-<img width="1040" height="733" alt="Prediction Model 1" src="https://github.com/user-attachments/assets/7143b1dc-7f82-43ac-adf7-1ee5ccbdbdf0" />
-
-
-
+Code:
 ```
 set.seed(123) ## helps to keep the same random selection everytime
 sample_size <- floor(0.8 * nrow(FullAirlines)) ## Taking 80 percent of the row from the dataset
 train_indices <- sample(seq_len(nrow(FullAirlines)),size = sample_size) #this is randomizing which rows I chose 
-
 
 train <- FullAirlines[train_indices, ] 
 test <- FullAirlines[-train_indices, ] 
 # The training set is used to 'teach' the model to find patterns in the data.
 # It consists of all the randomly selected rows from the original dataset.
 
-
 DelayModel <- glm(Delay ~ DayOfWeek + Time + Length, data = train_data, family = binomial)
-summary(DelayModel) # to see the coefficient
-# Then the testing set is used to evaluate the model's predictive performance.
-# It contains all the rows that were not included in the training set,
-# ensuring the model has never seen this data before.
-
-
-```
-<img width="643" height="375" alt="image" src="https://github.com/user-attachments/assets/233d98c7-24a7-4439-85a1-d2efb4061a1d" />
-
-```
-
-prediction_df <- predict(DelayModel, newdata = test, type = "response" )
-head(prediction_df)
-# Then using trained model to predict the probability of a delay for each flight in
-# the unseen 'test' dataset. The 'response' type ensures the output is a probability
-# value between 0 and 1.
-```
-<img width="559" height="42" alt="image" src="https://github.com/user-attachments/assets/1a6b0627-a6b0-4976-94a0-f7a4a6b3a07f" />
-
-
-```
-
-predict_binary <- ifelse(prediction_df > 0.5, 1, 0)
-# Convert the predicted probabilities into a binary classification (0 or 1). if the predicted probability of a delay
-# is greater than 50%, we classify it as a '1' (Delay), otherwise it's a '0'
-
-
-table(predicted = predict_binary, actual = test$Delay)
-# The confusion matrix to evaluate the model's performance.
-# This table compares our model's predictions to the actual outcomes in the test dataset.
-```
-<img width="264" height="76" alt="image" src="https://github.com/user-attachments/assets/71ed82ba-c753-477a-a95e-930c5af49838" />
-
-```
-
-AirlinesModel <- test
-#Creating a copy of the test data to store our predictions.
-
-AirlinesModel$prediction_df <- predict(DelayModel, newdata = test, type = "response" )
-AirlinesModel$predict_binary <- ifelse(AirlinesModel$prediction_df > 0.5, 1, 0)
-# Now using the trained model to generate predicted probabilities for the test data.
-# We store these probabilities in a new column called 'prediction_df'.
-
-
-library(caret)
-conf_matrix <- table(Predicted = AirlinesModel$predict_binary , Actual = AirlinesModel$Delay)
-# Creating a confusion matrix by comparing our model's binary predictions to the
-# actual outcomes in the test data. This is the primary tool for evaluating a classification model's performance.
-
-
-fourfoldplot(conf_matrix, color = c("firebrick", "steelblue"),
-             main = "Confusion Matrix")
-
-# Lastly using a  fourfoldplot from the caret package to visualize the confusion matrix.
-# This plot displays the proportions of true positives, true negatives, false positives, and false negatives, giving
-# a quick and intuitive view of the model's performance.
-```
-
-
-<img width="1040" height="733" alt="Confusion Matrix" src="https://github.com/user-attachments/assets/7f475904-8b4c-4a1d-9378-67c8d4139555" />
-
-
-
-
-
+<img width="1040" height="733" alt="Prediction Model 1" src="https://github.com/user-attachments/assets/7143b1dc-7f82-43ac-adf7-1ee5ccbdbdf0" 
