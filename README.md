@@ -240,5 +240,4 @@ fourfoldplot(conf_matrix, color = c("firebrick", "steelblue"),
 
 
 
-
-
+https://medium.com/analytics-vidhya/confusion-matrix-accuracy-precision-recall-f1-score-ade299cf63cd
