@@ -175,13 +175,25 @@ head(prediction_df)
 ```
 ## Confusion Matrix
 
-<img width="1040" height="733" alt="Confusion Matrix" src="https://github.com/user-attachments/assets/6d9f01fc-5046-4bb5-b17d-cec0f92b61f4" />
-The confusion matrix is a tool used to evaluate how well your model was able predict positive or negative outcomes. This matrix consist of 4 squares.
-True Positive (correctly predicting no delay), False Negative , False Positive, and True Negative.
+<img width="1040" height="733" alt="Confusion Matrix" src="https://github.com/user-attachments/assets/6d9f01fc-5046-4bb5-b17d-cec0f92b61f4" /> 
+The confusion matrix is a tool used to evaluate how well your model was able predict positive or negative outcomes. This matrix consist of 4 squares. True Positive (correctly predicting no delay), False Negative , False Positive, and True Negative.
 
-We use 3 equations to test to measure 
+We use 3 equations to test to measure, accuracy, precision, and recall. 
 
-Accuracy 
+Accuracy represents the number of correctly classified data instances over the total number of data instances.
+Accuracy = (45457 +14647) /(45457+14647+32433+14340)  =  60104/106877 =.5623 *100 = 56.23% 
+        in percentage this means that our model is 56.23% accurate
+
+Precision, is calculating how many were actuall correct.
+    45457/(45457+14340) = .7601 *100 = 76.01 %
+
+
+and Recall, it's also known as sensitivity. Calulating  how many positive cases did the model catch?
+
+45457/(45457+32433) = .58360 *100 = 58.7 % With a precision of 76% and a recall of 58.7%.
+
+
+This tells us that our model was able to correctly predict flight delays rougly 56.6%. Telling us our model is not very reliable. with precision our mofel was able to predict the positive class correctly about 76% of the time, so although the model only guessed a little over half correct this shows that when the model does guess a posistive result it is usually correct. Lastly is Recall, the model was able to identify 58.7% of all actual positives. This means many true posistives are being missed; our model is failing to identify and warn about many delays.
 ```
 predict_binary <- ifelse(prediction_df > 0.5, 1, 0)
 # Convert the predicted probabilities into a binary classification (0 or 1). if the predicted probability of a delay
